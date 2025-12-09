@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="src/style.css">
+  </head>
+  <body>
+    <div class="background-container">
+        <div id="app-body">
+            <h1>To Do List</h1>  
+            <div class="button-container">
+                <btn id="add-task-btn" onClick="openTaskModal()">Add Task</btn>
+                <div style="position: relative;">
+                    <btn id="sort-btn" onClick="toggleSortMenu()">Sort Tasks ▼</btn>
+                    <div id="sort-menu" class="sort-menu hidden">
+                        <div class="sort-option" onClick="sortTasks('high-to-low')">High to Low Priority</div>
+                        <div class="sort-option" onClick="sortTasks('low-to-high')">Low to High Priority</div>
+                        <div class="sort-option" onClick="sortTasks('due-date')">Due Date</div>
+                    </div>
+                </div>
+            </div>
+        
+        <ul id="task-list">
+        </ul>
+        </div>
+    </div>
+    
+    <!-- Task Modal -->
+    <div id="task-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onClick="closeTaskModal()">&times;</span>
+            <h2>Add New Task</h2>
+            <form id="task-form" onsubmit="submitTask(event)">
+                <div class="form-group">
+                    <label for="task-name">Task Name:</label>
+                    <input type="text" id="task-name" placeholder="Enter task name..." required>
+                </div>
+                <div class="form-group">
+                    <label for="task-due-date">Due Date:</label>
+                    <input type="date" id="task-due-date">
+                </div>
+                <div class="form-group">
+                    <label for="task-priority">Priority:</label>
+                    <select id="task-priority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Add Task</button>
+            </form>
+        </div>
+    </div>
+
+    <!--<div id="task-modal-edit" class="edit-modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onClick="closeEditModal()">&times;</span>
+            <h2>Edit Task</h2>
+            <form id="task-form" onsubmit="submitTask(event)">
+                <div class="form-group">
+                    <label for="task-name">Task Name:</label>
+                    <input type="text" id="task-name" placeholder="Enter task name..." required>
+                </div>
+                <div class="form-group">
+                    <label for="task-due-date">Due Date:</label>
+                    <input type="date" id="task-due-date">
+                </div>
+                <div class="form-group">
+                    <label for="task-priority">Priority:</label>
+                    <select id="task-priority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Edit Task</button>
+            </form>
+        </div>
+    </div>-->
+    <script src="../src/index.js"></script>
+  </body>
+</html>
