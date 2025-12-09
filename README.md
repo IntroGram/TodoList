@@ -16,7 +16,7 @@ Simply double click on index.html or drag index.html to browser of choice. Make 
 ## LLMs used
 Used the built in AI for Visual Studio Code (Claude Haiku 4.5)
 
-### Some of the prompts I used:
+## Some of the prompts I used:
 1. Can you make a simple framework for a todo list with an input field to add new tasks?
 2. For the Sort Tasks button how would you make a dropdown with selections for High to Low Priority, Low to High Priority, and the Due Date?
 3. How would you save the items in the list into local storage efficiently?
