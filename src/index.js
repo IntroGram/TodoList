@@ -1,7 +1,9 @@
 let taskModal;
+let editModal;
 let taskList;
 let taskForm;
 let sortMenu;
+let currentEditItem = null;
 
 function initializeElements() {
     taskModal = document.getElementById('task-modal');
@@ -22,8 +24,11 @@ function openTaskModal() {
 }
 
 function openEditModal(taskItem) {
+    currentEditItem = taskItem.innerText.split(" ");
+    const formattedDate = new Date(currentEditItem[2].match(/\d{4}-\d{2}-\d{2}/g)[0]).toISOString().split('T')[0];
+    document.getElementById('edit-task-name').value = currentEditItem[0]
+    document.getElementById('edit-task-due-date').value = formattedDate
     editModal.classList.remove('hidden');
-    document.getElementById('task-name').focus();
 }
 
 function closeTaskModal() {
@@ -33,7 +38,7 @@ function closeTaskModal() {
 
 function closeEditModal() {
     editModal.classList.add('hidden');
-    taskForm.reset();
+    currentEditItem = null;
 }
 
 function toggleSortMenu() {
@@ -131,7 +136,8 @@ function attachEventListeners(taskItem) {
 
     const editBtn = taskItem.querySelector('.edit-btn');
     editBtn.addEventListener('click', function() {
-        openEditModal(taskItem);
+        console.log(taskItem.parentNode);
+        openEditModal(taskItem.parentNode);
     });
 }
 
