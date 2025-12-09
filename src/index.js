@@ -23,7 +23,6 @@ function openTaskModal() {
 }
 
 function openEditModal(taskItem) {
-    console.log(taskItem);
     currentEditItem = taskItem.innerText.split(" ");
     let formattedDate = '';
     if (currentEditItem.length > 1) {
@@ -31,11 +30,10 @@ function openEditModal(taskItem) {
     }
     document.getElementById('edit-task-name').value = currentEditItem[0]
     document.getElementById('edit-task-due-date').value = formattedDate
-    /*console.log(taskItem.querySelector("li").classList);
     let priority = 'medium';
-        if (taskItem.querySelector("li").classList.contains('priority-low')) priority = 'low';
-        else if (taskItem.querySelector("li").classList.contains('priority-high')) priority = 'high';
-    document.getElementById('edit-task-priority').value = priority;*/
+        if (taskItem.classList.contains('priority-low')) priority = 'low';
+        else if (taskItem.classList.contains('priority-high')) priority = 'high';
+    document.getElementById('edit-task-priority').value = priority;
     editModal.classList.remove('hidden');
 }
 
@@ -143,8 +141,6 @@ function attachEventListeners(taskItem) {
 
     const editBtn = taskItem.querySelector('.edit-btn');
     editBtn.addEventListener('click', function() {
-        console.log("I'm clicked\n");
-        console.log(taskItem);
         openEditModal(taskItem);
     });
 }
