@@ -152,7 +152,7 @@ function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     tasks.forEach(task => {
         let taskItem = document.createElement('li');
-        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.text}</span><btn class="edit-btn"><img src="../images/edit.png"></btn><btn class="delete-btn">X</btn>`;
+        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.text}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn">X</btn>`;
         const priority = task.priority || 'medium';
         taskItem.classList.add(`priority-${priority}`);
         if (task.completed) {

@@ -58,20 +58,20 @@
         <div class="modal-content">
             <span class="close-modal" onClick="closeEditModal()">&times;</span>
             <h2>Edit Task</h2>
-            <form id="task-form" onsubmit="submitTask(event)">
+            <form id="edit-task-form" onsubmit="submitTask(event)">
                 <div class="form-group">
                     <label for="task-name">Task Name:</label>
-                    <input type="text" id="task-name" placeholder="Enter task name..." required>
+                    <input type="text" id="edit-task-name" placeholder="Enter task name..." required>
                 </div>
                 <div class="form-group">
                     <label for="task-due-date">Due Date:</label>
-                    <input type="date" id="task-due-date">
+                    <input type="date" id="edit-task-due-date">
                 </div>
                 <div class="form-group">
                     <label for="task-priority">Priority:</label>
-                    <select id="task-priority">
+                    <select id="edit-task-priority">
                         <option value="low">Low</option>
-                        <option value="medium" selected>Medium</option>
+                        <option value="medium">Medium</option>
                         <option value="high">High</option>
                     </select>
                 </div>
