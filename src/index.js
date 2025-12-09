@@ -26,7 +26,6 @@ function openEditModal(taskItem) {
     document.getElementById('task-name').focus();
 }
 
-
 function closeTaskModal() {
     taskModal.classList.add('hidden');
     taskForm.reset();
@@ -65,7 +64,7 @@ function sortTasks(sortType) {
             const aDate = extractDate(aText);
             const bDate = extractDate(bText);
             
-            // Tasks without due dates go to the end
+            // Tasks with no due dates go to the end
             if (!aDate) return 1;
             if (!bDate) return -1;
             
@@ -73,7 +72,6 @@ function sortTasks(sortType) {
         });
     }
     
-    // Re-append tasks in new order
     tasks.forEach(task => taskList.appendChild(task));
     sortMenu.classList.add('hidden');
     saveTasks();
