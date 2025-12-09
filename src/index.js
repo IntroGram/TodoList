@@ -3,7 +3,6 @@ let editModal;
 let taskList;
 let taskForm;
 let sortMenu;
-let currentEditItem = null;
 
 function initializeElements() {
     taskModal = document.getElementById('task-modal');
@@ -24,10 +23,19 @@ function openTaskModal() {
 }
 
 function openEditModal(taskItem) {
+    console.log(taskItem);
     currentEditItem = taskItem.innerText.split(" ");
-    const formattedDate = new Date(currentEditItem[2].match(/\d{4}-\d{2}-\d{2}/g)[0]).toISOString().split('T')[0];
+    let formattedDate = '';
+    if (currentEditItem.length > 1) {
+        formattedDate = new Date(currentEditItem[2].match(/\d{4}-\d{2}-\d{2}/g)[0]).toISOString().split('T')[0];
+    }
     document.getElementById('edit-task-name').value = currentEditItem[0]
     document.getElementById('edit-task-due-date').value = formattedDate
+    /*console.log(taskItem.querySelector("li").classList);
+    let priority = 'medium';
+        if (taskItem.querySelector("li").classList.contains('priority-low')) priority = 'low';
+        else if (taskItem.querySelector("li").classList.contains('priority-high')) priority = 'high';
+    document.getElementById('edit-task-priority').value = priority;*/
     editModal.classList.remove('hidden');
 }
 
@@ -38,7 +46,6 @@ function closeTaskModal() {
 
 function closeEditModal() {
     editModal.classList.add('hidden');
-    currentEditItem = null;
 }
 
 function toggleSortMenu() {
@@ -136,8 +143,9 @@ function attachEventListeners(taskItem) {
 
     const editBtn = taskItem.querySelector('.edit-btn');
     editBtn.addEventListener('click', function() {
-        console.log(taskItem.parentNode);
-        openEditModal(taskItem.parentNode);
+        console.log("I'm clicked\n");
+        console.log(taskItem);
+        openEditModal(taskItem);
     });
 }
 
