@@ -21,23 +21,16 @@ function openTaskModal() {
     document.getElementById('task-name').focus();
 }
 
-/*function openEditModal(taskItem) {
-    editModal.classList.remove('hidden');
-    document.getElementById('task-name').focus();
-    document.getElementById('task-name').value.trim() = taskItem.parentElement.querySelector('.task-text').innerText;
-    document.getElementById('task-due-date').value = extractDate(taskItem.querySelector('.task-text').innerText) || '';
-    document.getElementById('task-priority').value = Array.from(taskItem.classList).find(c => c.startsWith('priority-'))?.split('-')[1] || 'medium';
-}*/
 
 function closeTaskModal() {
     taskModal.classList.add('hidden');
     taskForm.reset();
 }
 
-/*function closeEditModal() {
+function closeEditModal() {
     editModal.classList.add('hidden');
     taskForm.reset();
-}*/
+}
 
 function toggleSortMenu() {
     sortMenu.classList.toggle('hidden');
@@ -108,7 +101,7 @@ function submitTask(event) {
 
 function addTask(taskText, priority = 'medium') {
     let taskItem = document.createElement('li');
-    taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${taskText}</span><btn class="edit-btn"><img src="../images/edit.png"></btn><btn class="delete-btn">X</btn>`;
+    taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${taskText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn">X</btn>`;
     taskItem.classList.add(`priority-${priority}`);
     taskList.appendChild(taskItem);
     
@@ -133,10 +126,6 @@ function attachEventListeners(taskItem) {
         saveTasks();
     });
 
-    const editBtn = taskItem.querySelector('.edit-btn');
-    editBtn.addEventListener('click', function() {
-        openEditModal(taskItem);
-    });
 }
 
 function saveTasks() {
