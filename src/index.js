@@ -21,6 +21,11 @@ function openTaskModal() {
     document.getElementById('task-name').focus();
 }
 
+function openEditModal(taskItem) {
+    editModal.classList.remove('hidden');
+    document.getElementById('task-name').focus();
+}
+
 
 function closeTaskModal() {
     taskModal.classList.add('hidden');
@@ -126,6 +131,10 @@ function attachEventListeners(taskItem) {
         saveTasks();
     });
 
+    const editBtn = taskItem.querySelector('.edit-btn');
+    editBtn.addEventListener('click', function() {
+        openEditModal(taskItem);
+    });
 }
 
 function saveTasks() {
