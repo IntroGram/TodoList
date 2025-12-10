@@ -3,6 +3,7 @@ let editModal;
 let taskList;
 let taskForm;
 let sortMenu;
+let temporaryTaskSave;
 
 class Task {
     constructor(taskName, dueDate, priority, completed = false) {
@@ -48,6 +49,8 @@ function openEditModal(taskItem) {
         if (taskItem.classList.contains('priority-low')) priority = 'low';
         else if (taskItem.classList.contains('priority-high')) priority = 'high';
     document.getElementById('edit-task-priority').value = priority;
+
+    temporaryTaskSave = new Task(currentEditItem, formattedDate, priority);
     editModal.classList.remove('hidden');
 }
 
@@ -131,7 +134,7 @@ function submitTask(event) {
 
 function addTask(taskText, priority = 'medium', newTask) {
     let taskItem = document.createElement('li');
-    taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${taskText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn">X</btn>`;
+    taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${taskText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
     taskItem.classList.add(`priority-${priority}`);
     taskList.appendChild(taskItem);
     
@@ -158,19 +161,39 @@ function attachEventListeners(taskItem) {
 
     const editBtn = taskItem.querySelector('.edit-btn');
     editBtn.addEventListener('click', function() {
+        if(taskItem.classList.contains('completed')){
+            alert("You cannot edit a completed task.");
+            return;
+        }
         openEditModal(taskItem);
     });
 }
 
+//This is bad code - I'm aware but unsure how to exactly refactor it
 function submitEditTask(event) {
     event.preventDefault();
-    console.log('Im here');
-    const taskName = document.getElementById('edit-task-name').value.trim();
-    const dueDate = document.getElementById('edit-task-due-date').value;
-    const priority = document.getElementById('edit-task-priority').value;
+    const newTaskName = document.getElementById('edit-task-name').value.trim();
+    const newDueDate = document.getElementById('edit-task-due-date').value;
+    const newPriority = document.getElementById('edit-task-priority').value;
 
-    reSaveTasks();
-    closeEditModal()
+    const tasks = [];
+    taskList.querySelectorAll('li').forEach(li => {
+        var taskText = li.querySelector('.task-text').innerText;
+        const dueDate = extractDate(taskText);
+        taskText = taskText.replace(` (DUE: ${dueDate})`, '');
+        const completed = li.classList.contains('completed');
+        let priority = 'medium';
+        if (li.classList.contains('priority-low')) priority = 'low';
+        else if (li.classList.contains('priority-high')) priority = 'high';
+        if (taskText === temporaryTaskSave.taskName && dueDate === temporaryTaskSave.dueDate && priority === temporaryTaskSave.priority) {
+            tasks.push(new Task(newTaskName, newDueDate, newPriority));
+        }else{
+            tasks.push(new Task(taskText, dueDate, priority, completed));
+        }
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    closeEditModal();
+    window.location.reload();
 }
 
 //Resaves tasks to local storage but inefficiently? need to find better way to do this
@@ -190,16 +213,15 @@ function reSaveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
+
 function saveTasks(newTask) {
     var tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
     tasks.push(newTask);
-    console.log(tasks);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
-    console.log(tasks);
     tasks.forEach(task => {
         let taskItem = document.createElement('li');
         taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.displaytext}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
