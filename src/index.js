@@ -17,6 +17,7 @@ class Task {
 
 function generateTaskText(taskName, dueDate) {
     if (dueDate) {
+        //return taskName + `<b> (DUE: ${dueDate})</b>`; Cannot make it bold without breaking HTML formatting need to adjust CSS flex but unable to find a 1 line fix at the moment
         return taskName + ` (DUE: ${dueDate})`;
     }
     return taskName 
@@ -210,6 +211,7 @@ function submitEditTask(event) {
 
 //Resaves tasks to local storage but inefficiently? need to find better way to do this
 //Will be a problem if someone puts in (DUE: YYYY-MM-DD) - fixed by checking for an extra date when adding task but inelegant
+//Will also probably be a problem if someone puts in HTML tags in the task name - UNFIXED
 function reSaveTasks() {
     const tasks = [];
     taskList.querySelectorAll('li').forEach(li => {
