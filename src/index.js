@@ -4,6 +4,14 @@ let taskList;
 let taskForm;
 let sortMenu;
 
+class Task {
+    constructor(name, dueDate, priority) {
+        this.name = name;
+        this.dueDate = dueDate;
+        this.priority = priority;
+    }   
+}
+
 function initializeElements() {
     taskModal = document.getElementById('task-modal');
     editModal = document.getElementById('task-modal-edit');
@@ -71,14 +79,10 @@ function sortTasks(sortType) {
         tasks.sort((a, b) => {
             const aText = a.querySelector('.task-text').innerText;
             const bText = b.querySelector('.task-text').innerText;
-            const aDate = extractDate(aText);
-            const bDate = extractDate(bText);
-            
-            // Tasks with no due dates go to the end
-            if (!aDate) return 1;
-            if (!bDate) return -1;
-            
-            return new Date(aDate) - new Date(bDate);
+            let aDate = extractDate(aText);
+            let bDate = extractDate(bText);
+
+            return aDate.getTime() - bDate.getTime();
         });
     }
     
@@ -88,8 +92,10 @@ function sortTasks(sortType) {
 }
 
 function extractDate(text) {
-    const match = text.match(/Due: (\d{4}-\d{2}-\d{2})/);
-    return match ? match[1] : null;
+    console.log(text);
+    const match = text.match(/(\d{4}-\d{2}-\d{2})/);
+    console.log(match);
+    return match ? new Date(match[1]) : new Date(8640000000000000);
 }
 
 function submitTask(event) {
