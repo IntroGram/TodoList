@@ -116,7 +116,7 @@ function extractDate(text) {
     return match ? match[1] : "";
 }
 
-//This is bad code but would need to refactor whole thing and not enough time at the moment
+//This fuction does not feel correct or be elegant would need more time refactor
 function submitTask(event) {
     event.preventDefault();
     const taskName = document.getElementById('task-name').value.trim();
