@@ -11,7 +11,7 @@ Simply double click on index.html or drag index.html to browser of choice. Make 
 ## Extra features
 1. When adding tasks allows for a due date and a priority level.
 2. You are able to sort To Do tasks by priority and by due date.
-3. UNFINISHED There is a button to edit the current task but it is current non-functional.
+3. There is a button to edit the current task.
 
 ## LLMs used
 Used the built in AI for Visual Studio Code (Claude Haiku 4.5)
