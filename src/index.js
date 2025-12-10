@@ -5,10 +5,12 @@ let taskForm;
 let sortMenu;
 
 class Task {
-    constructor(name, dueDate, priority) {
-        this.name = name;
+    constructor(taskName, dueDate, priority, completed = false) {
+        this.taskName = taskName;
         this.dueDate = dueDate;
         this.priority = priority;
+        this.displaytext = generateTaskText(taskName, dueDate);
+        this.completed = completed;
     }   
 }
 
@@ -77,10 +79,10 @@ function sortTasks(sortType) {
         });
     } else if (sortType === 'due-date') {
         tasks.sort((a, b) => {
-            const aText = a.querySelector('.task-text').innerText;
-            const bText = b.querySelector('.task-text').innerText;
-            let aDate = extractDate(aText);
-            let bDate = extractDate(bText);
+            let aText = extractDate(a.querySelector('.task-text').innerText);
+            let bText = extractDate(b.querySelector('.task-text').innerText);
+            let aDate = aText ? new Date(extractDate(aText)) : new Date(8640000000000000);
+            let bDate = bText ? new Date(extractDate(bText)) : new Date(8640000000000000);
 
             return aDate.getTime() - bDate.getTime();
         });
@@ -88,16 +90,15 @@ function sortTasks(sortType) {
     
     tasks.forEach(task => taskList.appendChild(task));
     sortMenu.classList.add('hidden');
-    saveTasks();
+    reSaveTasks();
 }
 
 function extractDate(text) {
-    console.log(text);
     const match = text.match(/(\d{4}-\d{2}-\d{2})/);
-    console.log(match);
-    return match ? new Date(match[1]) : new Date(8640000000000000);
+    return match ? match[1] : "";
 }
 
+//This is bad code but would need to refactor whole thing and not enough time at the moment
 function submitTask(event) {
     event.preventDefault();
     const taskName = document.getElementById('task-name').value.trim();
@@ -113,19 +114,20 @@ function submitTask(event) {
     if (dueDate) {
         taskText += ` (DUE: ${dueDate})`;
     }
-    
-    addTask(taskText, priority);
+    const newTask = new Task(taskName, dueDate, priority);
+
+    addTask(taskText, priority, newTask);
     closeTaskModal();
 }
 
-function addTask(taskText, priority = 'medium') {
+function addTask(taskText, priority = 'medium', newTask) {
     let taskItem = document.createElement('li');
     taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${taskText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn">X</btn>`;
     taskItem.classList.add(`priority-${priority}`);
     taskList.appendChild(taskItem);
     
     attachEventListeners(taskItem);
-    saveTasks();
+    saveTasks(newTask);
 }
 
 function attachEventListeners(taskItem) {
@@ -136,13 +138,13 @@ function attachEventListeners(taskItem) {
         } else {
             taskItem.classList.remove('completed');
         }
-        saveTasks();
+        reSaveTasks();
     });
     
     const deleteBtn = taskItem.querySelector('.delete-btn');
     deleteBtn.addEventListener('click', function() {
         taskItem.remove();
-        saveTasks();
+        reSaveTasks();
     });
 
     const editBtn = taskItem.querySelector('.edit-btn');
@@ -151,24 +153,38 @@ function attachEventListeners(taskItem) {
     });
 }
 
-function saveTasks() {
-  const tasks = [];
+//Resaves tasks to local storage but inefficiently? need to find better way to do this
+//Will be a problem if someone puts in (DUE: YYYY-MM-DD) in task name but unsure how to fix
+function reSaveTasks() {
+    const tasks = [];
     taskList.querySelectorAll('li').forEach(li => {
-        const taskText = li.querySelector('.task-text').innerText;
+        var taskText = li.querySelector('.task-text').innerText;
+        const dueDate = extractDate(taskText);
+        taskText = taskText.replace(` (DUE: ${dueDate})`, '');
         const completed = li.classList.contains('completed');
         let priority = 'medium';
         if (li.classList.contains('priority-low')) priority = 'low';
         else if (li.classList.contains('priority-high')) priority = 'high';
-        tasks.push({ text: taskText, completed: completed, priority: priority });
+
+        tasks.push(new Task(taskText, dueDate, priority, completed));
     });
+    console.log(tasks);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function saveTasks(newTask) {
+    var tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
+    tasks.push(newTask);
+    console.log(tasks);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 function loadTasks() {
-    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
+    console.log(tasks);
     tasks.forEach(task => {
         let taskItem = document.createElement('li');
-        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.text}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn">X</btn>`;
+        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.displaytext}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn">X</btn>`;
         const priority = task.priority || 'medium';
         taskItem.classList.add(`priority-${priority}`);
         if (task.completed) {
@@ -179,6 +195,13 @@ function loadTasks() {
         attachEventListeners(taskItem);
     });
 }  
+
+function generateTaskText(taskName, dueDate) {
+    if (dueDate) {
+        return taskName + ` (DUE: ${dueDate})`;
+    }
+    return taskName 
+}
 
 initializeElements();
 loadTasks();
