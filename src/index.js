@@ -33,12 +33,16 @@ function openTaskModal() {
 }
 
 function openEditModal(taskItem) {
-    currentEditItem = taskItem.innerText.split(" ");
+    currentEditItem = taskItem.innerText;
+
     let formattedDate = '';
-    if (currentEditItem.length > 1) {
-        formattedDate = new Date(currentEditItem[2].match(/\d{4}-\d{2}-\d{2}/g)[0]).toISOString().split('T')[0];
+    const regex = /(\d{4}-\d{2}-\d{2})/;
+    if (regex.test(currentEditItem)) {
+        let dueDate = currentEditItem.match(regex)[0];
+        formattedDate = new Date(dueDate).toISOString().split('T')[0];
+        currentEditItem = currentEditItem.replace(` (DUE: ${dueDate})`, '');
     }
-    document.getElementById('edit-task-name').value = currentEditItem[0]
+    document.getElementById('edit-task-name').value = currentEditItem
     document.getElementById('edit-task-due-date').value = formattedDate
     let priority = 'medium';
         if (taskItem.classList.contains('priority-low')) priority = 'low';
@@ -109,13 +113,18 @@ function submitTask(event) {
         alert('Task name cannot be empty.');
         return;
     }
+
+    const regex = /(\d{4}-\d{2}-\d{2})/;
+    if (regex.test(taskName)) {
+        alert('Task name cannot contain a date.');
+        return;
+    }
     
     let taskText = taskName;
     if (dueDate) {
         taskText += ` (DUE: ${dueDate})`;
     }
     const newTask = new Task(taskName, dueDate, priority);
-
     addTask(taskText, priority, newTask);
     closeTaskModal();
 }
@@ -153,8 +162,19 @@ function attachEventListeners(taskItem) {
     });
 }
 
+function submitEditTask(event) {
+    event.preventDefault();
+    console.log('Im here');
+    const taskName = document.getElementById('edit-task-name').value.trim();
+    const dueDate = document.getElementById('edit-task-due-date').value;
+    const priority = document.getElementById('edit-task-priority').value;
+
+    reSaveTasks();
+    closeEditModal()
+}
+
 //Resaves tasks to local storage but inefficiently? need to find better way to do this
-//Will be a problem if someone puts in (DUE: YYYY-MM-DD) in task name but unsure how to fix
+//Will be a problem if someone puts in (DUE: YYYY-MM-DD) - fixed by checking for an extra date when adding task but inelegant
 function reSaveTasks() {
     const tasks = [];
     taskList.querySelectorAll('li').forEach(li => {
@@ -165,10 +185,8 @@ function reSaveTasks() {
         let priority = 'medium';
         if (li.classList.contains('priority-low')) priority = 'low';
         else if (li.classList.contains('priority-high')) priority = 'high';
-
         tasks.push(new Task(taskText, dueDate, priority, completed));
     });
-    console.log(tasks);
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
@@ -184,7 +202,7 @@ function loadTasks() {
     console.log(tasks);
     tasks.forEach(task => {
         let taskItem = document.createElement('li');
-        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.displaytext}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn">X</btn>`;
+        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.displaytext}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
         const priority = task.priority || 'medium';
         taskItem.classList.add(`priority-${priority}`);
         if (task.completed) {

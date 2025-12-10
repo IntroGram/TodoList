@@ -195,6 +195,11 @@ ul li input[type="checkbox"]{
     margin-left: auto;
 }
 
+.delete-btn img{
+    width: 22px;
+    height: auto;
+}
+
 .delete-btn:hover{
     background: red;
     color: white;
