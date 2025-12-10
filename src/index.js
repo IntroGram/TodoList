@@ -15,6 +15,13 @@ class Task {
     }   
 }
 
+function generateTaskText(taskName, dueDate) {
+    if (dueDate) {
+        return taskName + ` (DUE: ${dueDate})`;
+    }
+    return taskName 
+}
+
 function initializeElements() {
     taskModal = document.getElementById('task-modal');
     editModal = document.getElementById('task-modal-edit');
@@ -33,6 +40,7 @@ function openTaskModal() {
     document.getElementById('task-name').focus();
 }
 
+//Populates the Edit Modal with the current task's information
 function openEditModal(taskItem) {
     currentEditItem = taskItem.innerText;
 
@@ -67,6 +75,7 @@ function toggleSortMenu() {
     sortMenu.classList.toggle('hidden');
 }
 
+// Sorts tasks based on the selected sort type
 function sortTasks(sortType) {
     const tasks = Array.from(taskList.querySelectorAll('li'));
     
@@ -100,6 +109,7 @@ function sortTasks(sortType) {
     reSaveTasks();
 }
 
+// Pulls the due date from the task text
 function extractDate(text) {
     const match = text.match(/(\d{4}-\d{2}-\d{2})/);
     return match ? match[1] : "";
@@ -116,7 +126,6 @@ function submitTask(event) {
         alert('Task name cannot be empty.');
         return;
     }
-
     const regex = /(\d{4}-\d{2}-\d{2})/;
     if (regex.test(taskName)) {
         alert('Task name cannot contain a date.');
@@ -132,6 +141,7 @@ function submitTask(event) {
     closeTaskModal();
 }
 
+// Only called by the submitTask function
 function addTask(taskText, priority = 'medium', newTask) {
     let taskItem = document.createElement('li');
     taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${taskText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
@@ -142,6 +152,7 @@ function addTask(taskText, priority = 'medium', newTask) {
     saveTasks(newTask);
 }
 
+//Attaches event listeners to each button on the line
 function attachEventListeners(taskItem) {
     const checkbox = taskItem.querySelector('input[type="checkbox"]');
     checkbox.addEventListener('change', function() {
@@ -170,6 +181,7 @@ function attachEventListeners(taskItem) {
 }
 
 //This is bad code - I'm aware but unsure how to exactly refactor it
+//Resaves entire list of tasks to local storage when edit button is clicked
 function submitEditTask(event) {
     event.preventDefault();
     const newTaskName = document.getElementById('edit-task-name').value.trim();
@@ -235,13 +247,6 @@ function loadTasks() {
         attachEventListeners(taskItem);
     });
 }  
-
-function generateTaskText(taskName, dueDate) {
-    if (dueDate) {
-        return taskName + ` (DUE: ${dueDate})`;
-    }
-    return taskName 
-}
 
 initializeElements();
 loadTasks();
