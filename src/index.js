@@ -93,8 +93,8 @@ function sortTasks(sortType) {
         });
     } else if (sortType === 'due-date') {
         tasks.sort((a, b) => {
-            let aText = extractDate(a.querySelector('.task-text').innerText);
-            let bText = extractDate(b.querySelector('.task-text').innerText);
+            let aText = extractDate(a.querySelector('.due-date-text').innerText);
+            let bText = extractDate(b.querySelector('.due-date-text').innerText);
             let aDate = aText ? new Date(extractDate(aText)) : new Date(8640000000000000);
             let bDate = bText ? new Date(extractDate(bText)) : new Date(8640000000000000);
 
@@ -129,7 +129,6 @@ function submitTask(event) {
         alert('Task name cannot contain a date.');
         return;
     }
-    
     const newTask = new Task(taskName, dueDate, priority);
     addTask(newTask);
     closeTaskModal();
@@ -218,20 +217,6 @@ function reSaveTasks() {
         tasks.push(new Task(taskText, dueDate, priority, completed));
     });
     localStorage.setItem('tasks', JSON.stringify(tasks));
-
-    /*const tasks = [];
-    taskList.querySelectorAll('li').forEach(li => {
-        var taskText = li.querySelector('.task-text').innerText;
-        var dueDate = extractDate(taskText);
-        console.log(taskText);
-        taskText = taskText.replace(` (DUE: ${dueDate})`, '');
-        const completed = li.classList.contains('completed');
-        let priority = 'medium';
-        if (li.classList.contains('priority-low')) priority = 'low';
-        else if (li.classList.contains('priority-high')) priority = 'high';
-        tasks.push(new Task(taskText, dueDate, priority, completed));
-    });
-    localStorage.setItem('tasks', JSON.stringify(tasks));*/
 }
 
 function saveTasks(newTask) {
