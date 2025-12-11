@@ -70,7 +70,6 @@
     cursor: pointer;
     height: 34px;
     vertical-align: top;
-    margin-bottom: 10px;
 }
 
 #add-task-btn:hover{
@@ -95,7 +94,6 @@
     cursor: pointer;
     height: 34px;
     vertical-align: top;
-    margin-bottom: 10px;
 }
 
 #sort-btn:hover {
