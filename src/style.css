@@ -155,7 +155,7 @@ ul li.priority-high {
     border-left-color: #e74c3c;
 }
 
-ul li.completed .task-text{
+ul li.completed .task-text, ul li.completed .due-date-text{
     text-decoration: line-through;
     text-decoration-thickness: 2px;
     color: #7a7a7a;
