@@ -227,6 +227,12 @@ ul li input[type="checkbox"]{
     margin-left: auto;
     margin-right: 5px;
 }
+
+.edit-btn:hover{
+    background: darkgoldenrod;
+    color: white;
+}
+
 .edit-btn img{
     width: 22px;
     height: auto;
