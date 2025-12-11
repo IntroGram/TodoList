@@ -139,9 +139,7 @@ function addTask(newTask) {
     let newListLine = document.createElement('li');
     newListLine.innerHTML = `<input type="checkbox"> <span class="task-text">${newTask.taskName}</span><span class="due-date-text">${newTask.dueDateText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
     newListLine.classList.add(`priority-${newTask.priority}`);
-    taskList.appendChild(newListLine);
-    console.log(newListLine);
-    
+    taskList.appendChild(newListLine); 
     attachEventListeners(newListLine);
     saveTasks(newTask);
 }
@@ -193,7 +191,6 @@ function submitEditTask(event) {
         if (taskText === temporaryTaskSave.taskName && dueDate === temporaryTaskSave.dueDate && priority === temporaryTaskSave.priority) {
             tasks.push(new Task(newTaskName, newDueDate, newPriority));
         }else{
-            console.log("Task not changed");
             tasks.push(new Task(taskText, dueDate, priority, completed));
         }
     });
