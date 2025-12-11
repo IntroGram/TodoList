@@ -9,18 +9,17 @@ class Task {
     constructor(taskName, dueDate, priority, completed = false) {
         this.taskName = taskName;
         this.dueDate = dueDate;
+        this.dueDateText = generateDueDateText(dueDate);
         this.priority = priority;
-        this.displaytext = generateTaskText(taskName, dueDate);
         this.completed = completed;
     }   
 }
 
-function generateTaskText(taskName, dueDate) {
+function generateDueDateText(dueDate) {
     if (dueDate) {
-        return taskName + `<b> (DUE: ${dueDate})</b>`; //Cannot make it bold without breaking HTML formatting need to adjust CSS flex but unable to find a 1 line fix at the moment
-        //return taskName + ` (DUE: ${dueDate})`;
+        return `<b> (DUE: ${dueDate})</b>`; // Assuming dueDate is a string in the format "YYYY-MM-DD"
     }
-    return taskName 
+    return "";
 }
 
 function initializeElements() {
@@ -43,23 +42,21 @@ function openTaskModal() {
 
 //Populates the Edit Modal with the current task's information
 function openEditModal(taskItem) {
-    currentEditItem = taskItem.innerText;
-
-    let formattedDate = '';
-    const regex = /(\d{4}-\d{2}-\d{2})/;
-    if (regex.test(currentEditItem)) {
-        let dueDate = currentEditItem.match(regex)[0];
-        formattedDate = new Date(dueDate).toISOString().split('T')[0];
-        currentEditItem = currentEditItem.replace(` (DUE: ${dueDate})`, '');
+    var currentEditItem = taskItem.innerText;
+    
+    let dueDate = extractDate(currentEditItem);
+    if (dueDate) {
+        currentEditItem = currentEditItem.replace(`(DUE: ${dueDate})`, '').trim();
     }
+
     document.getElementById('edit-task-name').value = currentEditItem
-    document.getElementById('edit-task-due-date').value = formattedDate
+    document.getElementById('edit-task-due-date').value = dueDate
     let priority = 'medium';
         if (taskItem.classList.contains('priority-low')) priority = 'low';
         else if (taskItem.classList.contains('priority-high')) priority = 'high';
     document.getElementById('edit-task-priority').value = priority;
 
-    temporaryTaskSave = new Task(currentEditItem, formattedDate, priority);
+    temporaryTaskSave = new Task(currentEditItem, dueDate, priority);
     editModal.classList.remove('hidden');
 }
 
@@ -133,10 +130,6 @@ function submitTask(event) {
         return;
     }
     
-    let taskText = taskName;
-    if (dueDate) {
-        taskText += `<b> (DUE: ${dueDate})</b>`;
-    }
     const newTask = new Task(taskName, dueDate, priority);
     addTask(newTask);
     closeTaskModal();
@@ -144,12 +137,13 @@ function submitTask(event) {
 
 // Only called by the submitTask function
 function addTask(newTask) {
-    let taskItem = document.createElement('li');
-    taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${newTask.taskName}</span><span class="due-date-text"><b> (DUE: ${newTask.dueDate})</b></span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
-    taskItem.classList.add(`priority-${newTask.priority}`);
-    taskList.appendChild(taskItem);
+    let newListLine = document.createElement('li');
+    newListLine.innerHTML = `<input type="checkbox"> <span class="task-text">${newTask.taskName}</span><span class="due-date-text">${newTask.dueDateText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
+    newListLine.classList.add(`priority-${newTask.priority}`);
+    taskList.appendChild(newListLine);
+    console.log(newListLine);
     
-    attachEventListeners(taskItem);
+    attachEventListeners(newListLine);
     saveTasks(newTask);
 }
 
@@ -181,7 +175,7 @@ function attachEventListeners(taskItem) {
     });
 }
 
-//This is bad code - I'm aware but unsure how to exactly refactor it
+//This feels like bad code - I'm aware but unsure how to exactly refactor it
 //Resaves entire list of tasks to local storage when edit button is clicked
 function submitEditTask(event) {
     event.preventDefault();
@@ -192,8 +186,7 @@ function submitEditTask(event) {
     const tasks = [];
     taskList.querySelectorAll('li').forEach(li => {
         var taskText = li.querySelector('.task-text').innerText;
-        const dueDate = extractDate(taskText);
-        taskText = taskText.replace(` (DUE: ${dueDate})`, '');
+        var dueDate = extractDate(li.querySelector('.due-date-text').innerText);
         const completed = li.classList.contains('completed');
         let priority = 'medium';
         if (li.classList.contains('priority-low')) priority = 'low';
@@ -201,6 +194,7 @@ function submitEditTask(event) {
         if (taskText === temporaryTaskSave.taskName && dueDate === temporaryTaskSave.dueDate && priority === temporaryTaskSave.priority) {
             tasks.push(new Task(newTaskName, newDueDate, newPriority));
         }else{
+            console.log("Task not changed");
             tasks.push(new Task(taskText, dueDate, priority, completed));
         }
     });
@@ -216,8 +210,7 @@ function reSaveTasks() {
     const tasks = [];
     taskList.querySelectorAll('li').forEach(li => {
         var taskText = li.querySelector('.task-text').innerText;
-        const dueDate = extractDate(taskText);
-        taskText = taskText.replace(` (DUE: ${dueDate})`, '');
+        var dueDate = extractDate(li.querySelector('.due-date-text').innerText);
         const completed = li.classList.contains('completed');
         let priority = 'medium';
         if (li.classList.contains('priority-low')) priority = 'low';
@@ -225,8 +218,21 @@ function reSaveTasks() {
         tasks.push(new Task(taskText, dueDate, priority, completed));
     });
     localStorage.setItem('tasks', JSON.stringify(tasks));
-}
 
+    /*const tasks = [];
+    taskList.querySelectorAll('li').forEach(li => {
+        var taskText = li.querySelector('.task-text').innerText;
+        var dueDate = extractDate(taskText);
+        console.log(taskText);
+        taskText = taskText.replace(` (DUE: ${dueDate})`, '');
+        const completed = li.classList.contains('completed');
+        let priority = 'medium';
+        if (li.classList.contains('priority-low')) priority = 'low';
+        else if (li.classList.contains('priority-high')) priority = 'high';
+        tasks.push(new Task(taskText, dueDate, priority, completed));
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));*/
+}
 
 function saveTasks(newTask) {
     var tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
@@ -238,7 +244,7 @@ function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
     tasks.forEach(task => {
         let taskItem = document.createElement('li');
-        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.taskName}</span><span class="due-date-text"><b> (DUE: ${task.dueDate})</b></span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
+        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.taskName}</span><span class="due-date-text">${task.dueDateText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
         const priority = task.priority || 'medium';
         taskItem.classList.add(`priority-${priority}`);
         if (task.completed) {
