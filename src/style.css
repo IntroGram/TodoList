@@ -205,6 +205,10 @@ ul li input[type="checkbox"]{
     color: white;
 }
 
+.due-date-text {
+    margin-right: 3px;
+}
+
 .edit-btn{
     background: transparent;
     color: rgb(141, 141, 141);

@@ -17,8 +17,8 @@ class Task {
 
 function generateTaskText(taskName, dueDate) {
     if (dueDate) {
-        //return taskName + `<b> (DUE: ${dueDate})</b>`; Cannot make it bold without breaking HTML formatting need to adjust CSS flex but unable to find a 1 line fix at the moment
-        return taskName + ` (DUE: ${dueDate})`;
+        return taskName + `<b> (DUE: ${dueDate})</b>`; //Cannot make it bold without breaking HTML formatting need to adjust CSS flex but unable to find a 1 line fix at the moment
+        //return taskName + ` (DUE: ${dueDate})`;
     }
     return taskName 
 }
@@ -135,18 +135,18 @@ function submitTask(event) {
     
     let taskText = taskName;
     if (dueDate) {
-        taskText += ` (DUE: ${dueDate})`;
+        taskText += `<b> (DUE: ${dueDate})</b>`;
     }
     const newTask = new Task(taskName, dueDate, priority);
-    addTask(taskText, priority, newTask);
+    addTask(newTask);
     closeTaskModal();
 }
 
 // Only called by the submitTask function
-function addTask(taskText, priority = 'medium', newTask) {
+function addTask(newTask) {
     let taskItem = document.createElement('li');
-    taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${taskText}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
-    taskItem.classList.add(`priority-${priority}`);
+    taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${newTask.taskName}</span><span class="due-date-text"><b> (DUE: ${newTask.dueDate})</b></span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
+    taskItem.classList.add(`priority-${newTask.priority}`);
     taskList.appendChild(taskItem);
     
     attachEventListeners(taskItem);
@@ -238,7 +238,7 @@ function loadTasks() {
     const tasks = JSON.parse(localStorage.getItem('tasks') || "[]");
     tasks.forEach(task => {
         let taskItem = document.createElement('li');
-        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.displaytext}</span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
+        taskItem.innerHTML = `<input type="checkbox"> <span class="task-text">${task.taskName}</span><span class="due-date-text"><b> (DUE: ${task.dueDate})</b></span><btn class="edit-btn"><img src="images/edit.png"></btn><btn class="delete-btn"><img src="images/blackX.png"></btn>`;
         const priority = task.priority || 'medium';
         taskItem.classList.add(`priority-${priority}`);
         if (task.completed) {
